@@ -2,6 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
+//import routers:
+import usersRouter from "./routes/users.js";
+
 //dotenv configuration:
 dotenv.config();
 const PORT = process.env.PORT;
@@ -14,6 +17,7 @@ const app = express();
 app.use(express.json());
 
 //routes:
+app.use("/users", usersRouter);
 app.get("/", (req, res) => {
   res.status(200).send(`<h1>Welcome to Type_Database</h1>`);
 });
