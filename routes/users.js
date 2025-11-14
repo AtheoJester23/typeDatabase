@@ -1,5 +1,9 @@
 import express from "express";
-import { getAllUsers, getAUser } from "../controllers/usersController.js";
+import {
+  createUser,
+  getAllUsers,
+  getAUser,
+} from "../controllers/usersController.js";
 import { getUserById } from "../middlewares/getUserById.js";
 
 const router = express.Router();
@@ -9,5 +13,8 @@ router.get("/", getAllUsers);
 
 //GET Specific User:
 router.get("/:id", getUserById, getAUser);
+
+//POST Request:
+router.post("/", createUser);
 
 export default router;
