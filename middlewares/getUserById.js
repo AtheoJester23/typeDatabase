@@ -9,7 +9,7 @@ export const getUserById = async (req, res, next) => {
       return res.status(404).json({ message: "This User Does Not Exist." });
     }
 
-    req.users = retrievedData;
+    req.user = retrievedData;
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
