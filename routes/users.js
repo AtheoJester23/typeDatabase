@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createUser,
+  delUser,
   getAllUsers,
   getAUser,
   updateUser,
@@ -20,5 +21,8 @@ router.get("/:id", getUserById, getAUser);
 
 //UPDATE User Details:
 router.patch("/:id", getUserById, updateUser);
+
+//DELETE User:
+router.delete("/:id", getUserById, delUser);
 
 export default router;

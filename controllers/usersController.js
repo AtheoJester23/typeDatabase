@@ -140,3 +140,17 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+//DELETE User:
+export const delUser = async (req, res) => {
+  try {
+    await req.user.deleteOne();
+
+    //Response:
+    res.status(200).json({
+      message: "Account successfully deleted.",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
