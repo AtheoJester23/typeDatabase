@@ -16,7 +16,10 @@ export const getAllUsers = async (req, res) => {
 //GET Specific User:
 export const getAUser = async (req, res) => {
   try {
-    res.status(200).json(req.user);
+    //Exclude Password:
+    const { password: _, ...data } = req.user.toObject();
+
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -71,6 +74,66 @@ export const createUser = async (req, res) => {
     //Response:
     res.status(200).json({
       message: "New User Created Successfully",
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Update:
+export const updateUser = async (req, res) => {
+  try {
+    const { name, email, password, oldPassword } = req.body;
+
+    if (!oldPassword) {
+      return res.status(401).json({ message: "Failed to authenticate" });
+    }
+
+    //Authenticate User:
+    const isMatch = await bcrypt.compare(oldPassword, req.user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Wrong Password" });
+    }
+
+    if (name) {
+      if (name.replace(/[ ]/g, "") == "") {
+        return res.status(400).json({ message: "Invalid Name" });
+      }
+
+      req.user.name = name;
+    }
+
+    if (email) {
+      //Validate Email:
+      if (!validator.isEmail(email) || email.replace(/[ ]/g, "") == "") {
+        return res.status(400).json({ message: "Invalid Email Address" });
+      }
+
+      req.user.email = email;
+    }
+
+    if (password) {
+      if (password.replace(/[ ]/g, "") == "") {
+        return res.status(400).json({ message: "Invalid Password" });
+      }
+
+      //Encrypt Password
+      const saltRounds = 10;
+      const hashPassword = await bcrypt.hash(password, saltRounds);
+
+      req.user.password = hashPassword;
+    }
+
+    //Save the Update:
+    const saveUpdate = await req.user.save();
+
+    //Exclude password
+    const { password: _, ...data } = saveUpdate.toObject();
+
+    //The Response:
+    res.status(200).json({
+      messsage: "User Successfully Updated",
       data,
     });
   } catch (error) {

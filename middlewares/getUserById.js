@@ -4,7 +4,7 @@ export const getUserById = async (req, res, next) => {
   let retrievedData;
 
   try {
-    retrievedData = await Users.findById(req.params.id);
+    retrievedData = await Users.findById(req.params.id).select("+password");
     if (!retrievedData) {
       return res.status(404).json({ message: "This User Does Not Exist." });
     }
