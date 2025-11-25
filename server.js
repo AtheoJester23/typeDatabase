@@ -1,9 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
 //import routers:
 import usersRouter from "./routes/users.js";
+import loginRouter from "./routes/login.js";
 
 //dotenv configuration:
 dotenv.config();
@@ -13,14 +15,23 @@ const DATABASE = process.env.MONG_URI;
 //Express:
 const app = express();
 
+//cors:
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
+
 //middlewares:
 app.use(express.json());
 
 //routes:
-app.use("/users", usersRouter);
 app.get("/", (req, res) => {
   res.status(200).send(`<h1>Welcome to Type_Database</h1>`);
 });
+app.use("/users", usersRouter);
+app.use("/login", loginRouter);
 
 //404 handler:
 app.use((req, res, next) => {
