@@ -1,6 +1,7 @@
 import Users from "../models/users.js";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 //Get All Users
 export const getAllUsers = async (req, res) => {
@@ -28,11 +29,11 @@ export const getAUser = async (req, res) => {
 //POST Request:
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     if (
-      !name ||
-      name.replace(/[ ]/g, "") == "" ||
+      !username ||
+      username.replace(/[ ]/g, "") == "" ||
       !email ||
       email.replace(/[ ]/g, "") == "" ||
       !password ||
@@ -47,6 +48,8 @@ export const createUser = async (req, res) => {
       return res.status(409).json({ message: "That user already exists..." });
     }
 
+    // console.log(`This is the _id: ${theUser._id}`);
+
     //Validate Email Address:
     if (!validator.isEmail(email)) {
       return res
@@ -60,7 +63,7 @@ export const createUser = async (req, res) => {
 
     //User Details:
     const userDetails = new Users({
-      name,
+      username,
       email,
       password: hashedPassword,
     });
@@ -71,10 +74,16 @@ export const createUser = async (req, res) => {
     //Exclude Password from response:
     const { password: _, ...data } = createNewUser.toObject();
 
+    //Create JWT:
+    const token = jwt.sign({ id: data._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRATION,
+    });
+
     //Response:
     res.status(200).json({
       message: "New User Created Successfully",
       data,
+      token,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -84,7 +93,7 @@ export const createUser = async (req, res) => {
 //Update:
 export const updateUser = async (req, res) => {
   try {
-    const { name, email, password, oldPassword } = req.body;
+    const { username, email, password, oldPassword } = req.body;
 
     if (!oldPassword) {
       return res.status(401).json({ message: "Failed to authenticate" });
@@ -96,12 +105,12 @@ export const updateUser = async (req, res) => {
       return res.status(401).json({ message: "Wrong Password" });
     }
 
-    if (name) {
-      if (name.replace(/[ ]/g, "") == "") {
-        return res.status(400).json({ message: "Invalid Name" });
+    if (username) {
+      if (username.replace(/[ ]/g, "") == "") {
+        return res.status(400).json({ message: "Invalid username" });
       }
 
-      req.user.name = name;
+      req.user.username = username;
     }
 
     if (email) {

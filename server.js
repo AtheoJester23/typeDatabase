@@ -23,6 +23,18 @@ app.use(
   })
 );
 
+//mongoose connection:
+mongoose
+  .connect(DATABASE)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server Started at: http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
+
 //middlewares:
 app.use(express.json());
 
@@ -39,15 +51,3 @@ app.use((req, res, next) => {
     message: "This API link does not exist",
   });
 });
-
-//mongoose connection:
-mongoose
-  .connect(DATABASE)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server Started at: http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error(err.messages);
-  });
