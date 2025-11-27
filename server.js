@@ -5,7 +5,7 @@ import cors from "cors";
 
 //import routers:
 import usersRouter from "./routes/users.js";
-import loginRouter from "./routes/login.js";
+import authRouter from "./routes/authRoutes.js";
 
 //dotenv configuration:
 dotenv.config();
@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
   res.status(200).send(`<h1>Welcome to Type_Database</h1>`);
 });
 app.use("/users", usersRouter);
-app.use("/login", loginRouter);
+app.use("/auth", authRouter);
 
 //404 handler:
 app.use((req, res, next) => {
