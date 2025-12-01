@@ -6,6 +6,7 @@ import cors from "cors";
 //import routers:
 import usersRouter from "./routes/users.js";
 import authRouter from "./routes/authRoutes.js";
+import customRouter from "./routes/custom.js";
 
 //dotenv configuration:
 dotenv.config();
@@ -44,6 +45,7 @@ app.get("/", (req, res) => {
 });
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
+app.use("/custom", customRouter);
 
 //404 handler:
 app.use((req, res, next) => {
