@@ -1,20 +1,47 @@
 import Customs from "../models/customs.js";
+import Collections from "../models/collections.js";
+import Users from "../models/users.js";
 
 export const createNewCustom = async (req, res) => {
   try {
-    const { userId, title, content } = req.body;
+    const { userId, title, content, collectionsId, newCollection } = req.body;
 
     if (!userId || !title || !content) {
       return res.status(400).json({ message: "All inputs are required." });
     }
 
-    const customDetails = new Customs({
+    let finalCollectionsId = collectionsId;
+
+    //If the user opt to create a new collections instead;
+    if (newCollection) {
+      const exist = await Collections.findOne({ name: newCollection, userId });
+      if (exist) {
+        return res.status(409).json({ message: "Collection already exists." });
+      }
+
+      const createNewCollection = await Collections.create({
+        name: newCollection,
+        userId,
+      });
+
+      finalCollectionsId = createNewCollection._id;
+    }
+
+    //If the user opt to add a content to an existing collections
+    if (collectionsId) {
+      const existing = await Collections.findById(collectionsId);
+      if (!existing) {
+        return res.status(404).json({ message: "Collection not found." });
+      }
+    }
+
+    //Append the new content:
+    const customDetails = await Customs.create({
       title,
       content,
       userId,
+      collectionsId: finalCollectionsId,
     });
-
-    const createCustom = customDetails.save();
 
     //response:
     res.status(200).json({
@@ -38,6 +65,32 @@ export const getAllUserCustoms = async (req, res) => {
     }
 
     res.status(200).json(allCustoms);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Get specific user's collections:
+export const usersCollection = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    //Check if that userId exist:
+    const exist = await Users.findOne({ _id: userId });
+    if (!exist) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    //Get all the user's collection:
+    const allCollection = await Customs.find({ userId });
+    if (!allCollection) {
+      return res.status(404).json({ message: "No collection found." });
+    }
+
+    //response:
+    res.status(200).json({
+      data: allCollection,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -14,6 +14,10 @@ const customSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    collectionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Collections",
+    },
   },
   { timestamps: true }
 );
