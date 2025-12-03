@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get("/", getAllUserCustoms);
 
-router.get("/userCollections", usersCollection);
+router.get("/userCollections/:id", usersCollection);
 
 router.post("/create", createNewCustom);
 

@@ -76,7 +76,7 @@ export const usersCollection = async (req, res) => {
     const { userId } = req.body;
 
     //Check if that userId exist:
-    const exist = await Users.findOne({ _id: userId });
+    const exist = await Users.findById({ _id: req.params.id });
     if (!exist) {
       return res.status(404).json({ message: "User not found." });
     }
