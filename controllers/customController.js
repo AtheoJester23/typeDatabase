@@ -73,8 +73,6 @@ export const getAllUserCustoms = async (req, res) => {
 //Get specific user's collections:
 export const usersCollection = async (req, res) => {
   try {
-    const { userId } = req.body;
-
     //Check if that userId exist:
     const exist = await Users.findById({ _id: req.params.id });
     if (!exist) {
@@ -82,7 +80,7 @@ export const usersCollection = async (req, res) => {
     }
 
     //Get all the user's collection:
-    const allCollection = await Customs.find({ userId });
+    const allCollection = await Customs.find({ userId: req.params.id });
     if (!allCollection) {
       return res.status(404).json({ message: "No collection found." });
     }
