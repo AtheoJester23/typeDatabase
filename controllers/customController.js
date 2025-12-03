@@ -11,6 +11,7 @@ export const createNewCustom = async (req, res) => {
     }
 
     let finalCollectionsId = collectionsId;
+    let finalCollectionsName = null;
 
     //If the user opt to create a new collections instead;
     if (newCollection) {
@@ -25,6 +26,7 @@ export const createNewCustom = async (req, res) => {
       });
 
       finalCollectionsId = createNewCollection._id;
+      finalCollectionsName = newCollection;
     }
 
     //If the user opt to add a content to an existing collections
@@ -33,6 +35,8 @@ export const createNewCustom = async (req, res) => {
       if (!existing) {
         return res.status(404).json({ message: "Collection not found." });
       }
+
+      finalCollectionsName = existing.name;
     }
 
     //Append the new content:
@@ -40,7 +44,8 @@ export const createNewCustom = async (req, res) => {
       title,
       content,
       userId,
-      collectionsId: finalCollectionsId,
+      collectionName: finalCollectionsName,
+      collectionId: finalCollectionsId,
     });
 
     //response:

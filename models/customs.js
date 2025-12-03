@@ -14,6 +14,9 @@ const customSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    collectionName: {
+      type: String,
+    },
     collectionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Collections",
