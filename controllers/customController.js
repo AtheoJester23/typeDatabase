@@ -103,3 +103,13 @@ export const usersCollection = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getCollectionNames = async (req, res) => {
+  try {
+    const collectionNames = await Collections.find({ userId: req.params.id });
+
+    res.status(200).json(collectionNames);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
