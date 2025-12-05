@@ -4,17 +4,17 @@ import Users from "../models/users.js";
 
 export const createNewCustom = async (req, res) => {
   try {
-    const { userId, title, content, collectionsId, collectionName } = req.body;
+    const { userId, title, content, collectionId, collectionName } = req.body;
 
     if (!userId || !title || !content) {
       return res.status(400).json({ message: "All inputs are required." });
     }
 
-    let finalCollectionsId = collectionsId;
+    let finalCollectionsId = collectionId;
     let finalCollectionsName = null;
 
     //If no add to existing collection or create new collection:
-    if (!collectionName && !collectionsId) {
+    if (!collectionName && !collectionId) {
       return res.status(400).json({ message: "All inputs are required." });
     }
 
@@ -35,8 +35,8 @@ export const createNewCustom = async (req, res) => {
     }
 
     //If the user opt to add a content to an existing collections
-    if (collectionsId) {
-      const existing = await Collections.findById(collectionsId);
+    if (collectionId) {
+      const existing = await Collections.findById(collectionId);
       if (!existing) {
         return res.status(404).json({ message: "Collection not found." });
       }
