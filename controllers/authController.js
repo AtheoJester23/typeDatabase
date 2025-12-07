@@ -7,7 +7,9 @@ import jwt from "jsonwebtoken";
 //login:
 export const userLogin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    email = email.toLocaleLowerCase();
 
     if (!password || !email) {
       return res.status(400).json({ message: "Missing inputs" });
