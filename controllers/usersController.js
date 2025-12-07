@@ -29,7 +29,9 @@ export const getAUser = async (req, res) => {
 //POST Request:
 export const createUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    let { username, email, password } = req.body;
+
+    email = email.toLocaleLowerCase();
 
     if (
       !username ||
