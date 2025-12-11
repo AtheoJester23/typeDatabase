@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createNewCustom,
+  deleteCustom,
   getAllUserCustoms,
   getCollectionNames,
   usersCollection,
@@ -17,4 +18,5 @@ router.get("/userCollections/:id", getUserById, usersCollection);
 
 router.get("/userCollectionNames/:id", getUserById, getCollectionNames);
 
+router.delete("/delete/:id", deleteCustom);
 export default router;

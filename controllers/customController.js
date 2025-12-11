@@ -113,3 +113,28 @@ export const getCollectionNames = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteCustom = async (req, res) => {
+  try {
+    const { collectionId } = req.body;
+    const { id } = req.params;
+
+    const theCollection = await Collections.deleteOne({
+      userId: id,
+      _id: collectionId,
+    });
+    const allCustoms = await Customs.deleteMany({ userId: id, collectionId });
+    // const deletedCustom = await Customs.findByIdAndDelete(id);
+
+    if (!theCollection) {
+      return res.status(404).json({ message: "Custom not found." });
+    }
+
+    res.status(200).json({
+      key: theCollection,
+      value: allCustoms,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
