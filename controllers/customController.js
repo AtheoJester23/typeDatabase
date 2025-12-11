@@ -131,8 +131,7 @@ export const deleteCustom = async (req, res) => {
     }
 
     res.status(200).json({
-      key: theCollection,
-      value: allCustoms,
+      message: "Collection and its contents deleted successfully.",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
