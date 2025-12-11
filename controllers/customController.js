@@ -119,19 +119,32 @@ export const deleteCustom = async (req, res) => {
     const { collectionId } = req.body;
     const { id } = req.params;
 
-    const theCollection = await Collections.deleteOne({
+    // Delete the collection first
+    const deleteResult = await Collections.deleteOne({
       userId: id,
       _id: collectionId,
     });
-    const allCustoms = await Customs.deleteMany({ userId: id, collectionId });
-    // const deletedCustom = await Customs.findByIdAndDelete(id);
 
-    if (!theCollection) {
-      return res.status(404).json({ message: "Custom not found." });
+    // If it didn't delete anything, collection was not found
+    if (deleteResult.deletedCount === 0) {
+      return res.status(404).json({ message: "Collection not found." });
     }
+
+    // Delete all customs linked to this collection
+    await Customs.deleteMany({
+      userId: id,
+      collectionId,
+    });
+
+    // Get remaining collections for the user EXCEPT the deleted one
+    const remainingCollections = await Collections.find({
+      userId: id,
+      _id: { $ne: collectionId }, // <--- not equal
+    });
 
     res.status(200).json({
       message: "Collection and its contents deleted successfully.",
+      remainingCollections,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
