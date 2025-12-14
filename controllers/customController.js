@@ -150,3 +150,21 @@ export const deleteCustom = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteAllContentsOfUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    //Delete all collections linked to this user
+    await Collections.deleteMany({ userId: id });
+
+    //Delete all customs linked to this user
+    await Customs.deleteMany({ userId: id });
+
+    res.status(200).json({
+      message: "All user data deleted successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

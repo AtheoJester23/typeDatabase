@@ -67,6 +67,7 @@ export const createUser = async (req, res) => {
     const userDetails = new Users({
       username,
       email,
+      personalRecord: 0,
       password: hashedPassword,
     });
 
@@ -153,7 +154,7 @@ export const updateUser = async (req, res) => {
 };
 
 //DELETE User:
-export const delUser = async (req, res) => {
+export const delUser = async (req, res, next) => {
   try {
     await req.user.deleteOne();
 
@@ -164,4 +165,6 @@ export const delUser = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+
+  next();
 };

@@ -13,6 +13,10 @@ const usersSchema = new mongoose.Schema(
       required: true,
       validate: [validator.isEmail, "Invalid Email Address"],
     },
+    personalRecord: {
+      type: Number,
+      default: 0,
+    },
     password: {
       type: String,
       required: true,

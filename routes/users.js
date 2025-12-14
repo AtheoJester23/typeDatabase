@@ -7,6 +7,7 @@ import {
   updateUser,
 } from "../controllers/usersController.js";
 import { getUserById } from "../middlewares/getUserById.js";
+import { deleteAllContentsOfUser } from "../controllers/customController.js";
 
 const router = express.Router();
 
@@ -23,6 +24,6 @@ router.get("/:id", getUserById, getAUser);
 router.patch("/:id", getUserById, updateUser);
 
 //DELETE User:
-router.delete("/:id", getUserById, delUser);
+router.delete("/:id", getUserById, delUser, deleteAllContentsOfUser);
 
 export default router;
