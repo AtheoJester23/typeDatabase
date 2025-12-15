@@ -3,12 +3,14 @@ import { emailSend } from "../utils/sendEmail.js";
 import bcrypt from "bcrypt";
 import Users from "../models/users.js";
 import jwt from "jsonwebtoken";
+import { signRefreshToken } from "../utils/jwt.js";
 
 //login:
 export const userLogin = async (req, res) => {
   try {
-    let { email, password } = req.body;
+    let { email, password, rememberMe } = req.body;
 
+    rememberMe = Boolean(rememberMe);
     email = email.toLocaleLowerCase();
 
     if (!password || !email) {
@@ -37,8 +39,18 @@ export const userLogin = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRATION,
     });
 
+    const refreshToken = signRefreshToken(user);
+
     //Exclude password from response:
     const { password: _, ...data } = user.toObject();
+
+    //cookie response:
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000,
+    });
 
     //response:
     res.status(200).json({
