@@ -3,7 +3,7 @@ import { emailSend } from "../utils/sendEmail.js";
 import bcrypt from "bcrypt";
 import Users from "../models/users.js";
 import jwt from "jsonwebtoken";
-import { signRefreshToken } from "../utils/jwt.js";
+import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
 
 //login:
 export const userLogin = async (req, res) => {
@@ -58,6 +58,53 @@ export const userLogin = async (req, res) => {
       data,
       token,
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Refresh token:
+export const refresh = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Not logged in" });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    const user = await Users.findOne(decoded.id);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    //Generate new access token:
+    const accessToken = signAccessToken(user);
+
+    res.status(200).json({
+      accessToken,
+      user: {
+        _id: user._id,
+        email: user.email,
+        username: user.username,
+      },
+    });
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid refresh token" });
+  }
+};
+
+//logout:
+export const logout = (req, res) => {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    return res.status(200).json({ message: "Logged out" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
