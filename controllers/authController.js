@@ -76,7 +76,7 @@ export const refresh = async (req, res) => {
 
     const user = await Users.findOne(decoded.id);
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     //Generate new access token:

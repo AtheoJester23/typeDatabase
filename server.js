@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 //import routers:
 import usersRouter from "./routes/users.js";
@@ -15,6 +16,9 @@ const DATABASE = process.env.MONG_URI;
 
 //Express:
 const app = express();
+
+//Parse cookies
+app.use(cookieParser());
 
 //cors:
 app.use(
