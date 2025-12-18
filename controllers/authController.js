@@ -44,7 +44,6 @@ export const userLogin = async (req, res) => {
     //Exclude password from response:
     const { password: _, ...data } = user.toObject();
 
-    //cookie response:
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -69,12 +68,12 @@ export const refresh = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      return res.status(401).json({ message: "Not logged in" });
+      return res.status(404).json({ message: "No cookie found" });
     }
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
-    const user = await Users.findOne(decoded.id);
+    const user = await Users.findOne({ _id: decoded.id });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -104,7 +103,7 @@ export const logout = (req, res) => {
       sameSite: "strict",
     });
 
-    return res.status(200).json({ message: "Logged out" });
+    return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
