@@ -168,3 +168,24 @@ export const delUser = async (req, res, next) => {
 
   next();
 };
+
+//Update Personal Record:
+export const updatePersonalRec = async (req, res) => {
+  try {
+    const { personalRecord } = req.body;
+
+    if (!personalRecord || personalRecord.replace(/[]/g, "") == "") {
+      return res.status(400).json({ message: "Personal Record is required." });
+    }
+
+    req.user.personalRecord = personalRecord;
+
+    const saveRecord = await req.user.save();
+
+    res.status(200).json({
+      message: "Personal Record successfully updated.",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

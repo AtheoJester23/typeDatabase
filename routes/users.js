@@ -4,6 +4,7 @@ import {
   delUser,
   getAllUsers,
   getAUser,
+  updatePersonalRec,
   updateUser,
 } from "../controllers/usersController.js";
 import { getUserById } from "../middlewares/getUserById.js";
@@ -26,4 +27,6 @@ router.patch("/:id", getUserById, updateUser);
 //DELETE User:
 router.delete("/:id", getUserById, delUser, deleteAllContentsOfUser);
 
+//UPDATE User personalRecord:
+router.post("/:id", getUserById, updatePersonalRec);
 export default router;
