@@ -2,6 +2,7 @@ import express from "express";
 import {
   createNewCustom,
   deleteCustom,
+  deleteTopic,
   getAllUserCustoms,
   getCollectionNames,
   usersCollection,
@@ -19,4 +20,6 @@ router.get("/userCollections/:id", getUserById, usersCollection);
 router.get("/userCollectionNames/:id", getUserById, getCollectionNames);
 
 router.delete("/delete/:id", deleteCustom);
+
+router.delete("/deleteTopic/:id", deleteTopic);
 export default router;

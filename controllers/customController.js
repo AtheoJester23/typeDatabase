@@ -168,3 +168,21 @@ export const deleteAllContentsOfUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteTopic = async (req, res) => {
+  try {
+    const topic = await Customs.findOne({ _id: req.params.id });
+    if (!topic) {
+      return res.status(404).json({ message: "Topic not found." });
+    }
+
+    //Delete topic from database
+    const deletion = await topic.deleteOne();
+
+    res.status(200).json({
+      message: "Topic deleted succesfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
