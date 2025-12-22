@@ -28,5 +28,5 @@ router.patch("/:id", getUserById, updateUser);
 router.delete("/:id", getUserById, delUser, deleteAllContentsOfUser);
 
 //UPDATE User personalRecord:
-router.post("/:id", getUserById, updatePersonalRec);
+router.patch("/pb/:id", getUserById, updatePersonalRec);
 export default router;

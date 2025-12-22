@@ -172,9 +172,14 @@ export const delUser = async (req, res, next) => {
 //Update Personal Record:
 export const updatePersonalRec = async (req, res) => {
   try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Unauthorized action." });
+    }
+
     const { personalRecord } = req.body;
 
-    if (!personalRecord || personalRecord.replace(/[]/g, "") == "") {
+    if (!personalRecord) {
       return res.status(400).json({ message: "Personal Record is required." });
     }
 
