@@ -156,6 +156,31 @@ export const updateUser = async (req, res) => {
 //DELETE User:
 export const delUser = async (req, res, next) => {
   try {
+    const { password } = req.body;
+
+    if (!password || password.replace(/[ ]/g, "") == "") {
+      return res
+        .status(400)
+        .json({ message: "Password is required to delete account." });
+    }
+
+    //Authenticate User:
+    const isMatch = await bcrypt.compare(password, req.user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Wrong Password" });
+    }
+
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Unauthorized action." });
+    }
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
     await req.user.deleteOne();
 
     //Response:
