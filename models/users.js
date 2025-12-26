@@ -23,6 +23,12 @@ const usersSchema = new mongoose.Schema(
       minlength: 7,
       select: false,
     },
+    password_reset_token_hash: {
+      type: String,
+    },
+    password_reset_expires_at: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

@@ -5,6 +5,7 @@ import Users from "../models/users.js";
 import jwt from "jsonwebtoken";
 import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
 import { Resend } from "resend";
+import crypto from "crypto";
 
 //login:
 export const userLogin = async (req, res) => {
@@ -140,6 +141,7 @@ export const fp = async (req, res) => {
 };
 
 const resend = new Resend(process.env.RSND_API);
+const FRONTEND_URL = process.env.FRNTND_LOCAL;
 
 //Forgot Password(Resend):
 export const forgotPass = async (req, res) => {
@@ -164,11 +166,27 @@ export const forgotPass = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
+    //Generate random token:
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    user.password_reset_token_hash = tokenHash;
+    user.password_reset_expires_at = Date.now() + 1000 * 60 * 15;
+
+    //Save updated things for reset password:
+    await user.save();
+
+    const resetLink = `${FRONTEND_URL}/reset-password?token=${token}`;
+
     const result = await resend.emails.send({
       from: "no-reply@atheo.site",
       to: [email],
-      subject: "Testing Lang",
-      html: "<p>This is just to test if resend is working...</p>",
+      subject: "Reset your password",
+      html: `
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetLink}">Reset password</a>
+        <p>This link expires in 15 minutes.</p>
+      `,
     });
 
     res.status(200).json({
