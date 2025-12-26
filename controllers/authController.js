@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import Users from "../models/users.js";
 import jwt from "jsonwebtoken";
 import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
+import { Resend } from "resend";
 
 //login:
 export const userLogin = async (req, res) => {
@@ -109,7 +110,7 @@ export const logout = (req, res) => {
   }
 };
 
-//Forgot Password:
+//Forgot Password(Manual):
 export const fp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -135,5 +136,50 @@ export const fp = async (req, res) => {
     res.status(200).json({ message: "Email sent..." });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const resend = new Resend(process.env.RSND_API);
+
+//Forgot Password(Resend):
+export const forgotPass = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email || email.replace(/[ ]/g, "") == "") {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    //validate email:
+    const isValid = validator.isEmail(email);
+    if (!isValid) {
+      return res.status(400).json({ message: "Invalid email address" });
+    }
+
+    const user = await Users.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const result = await resend.emails.send({
+      from: "no-reply@atheo.site",
+      to: [email],
+      subject: "Testing Lang",
+      html: "<p>This is just to test if resend is working...</p>",
+    });
+
+    res.status(200).json({
+      success: true,
+      result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 };

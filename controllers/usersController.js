@@ -2,6 +2,7 @@ import Users from "../models/users.js";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { signRefreshToken } from "../utils/jwt.js";
 
 //Get All Users
 export const getAllUsers = async (req, res) => {
@@ -29,7 +30,7 @@ export const getAUser = async (req, res) => {
 //POST Request:
 export const createUser = async (req, res) => {
   try {
-    let { username, email, password } = req.body;
+    let { username, email, password, rememberMe } = req.body;
 
     email = email.toLocaleLowerCase();
 
@@ -80,6 +81,15 @@ export const createUser = async (req, res) => {
     //Create JWT:
     const token = jwt.sign({ id: data._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRATION,
+    });
+
+    const refreshToken = signRefreshToken(data);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000,
     });
 
     //Response:
