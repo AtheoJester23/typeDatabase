@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
 import { Resend } from "resend";
 import crypto from "crypto";
+import { appendFile } from "fs";
 
 //login:
 export const userLogin = async (req, res) => {
@@ -199,5 +200,46 @@ export const forgotPass = async (req, res) => {
       success: false,
       error: error.message,
     });
+  }
+};
+
+//Reset Password:
+export const resetPass = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!newPassword || newPassword.replace(/[ ]/g, "") == "") {
+      return res.status(402).json({ message: "Please enter a new password" });
+    }
+
+    if (!token || token.replace(/[ ]/g, "") == "") {
+      return res.status(401).json({ message: "Invalid or expired reset link" });
+    }
+
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await Users.findOne({
+      password_reset_token_hash: tokenHash,
+      password_reset_expires_at: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    //new Password:
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    user.password = hashedPassword;
+    user.password_reset_token_hash = null;
+    user.password_reset_expires_at = null;
+
+    //Save updates:
+    await user.save();
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
