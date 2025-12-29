@@ -70,10 +70,8 @@ export const refresh = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
-    return res.status(200).json({ message: "testing" });
-
     if (!refreshToken) {
-      return res.status(404).json({ message: "No cookie found" });
+      return res.status(401).json({ message: "No cookie found" });
     }
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
