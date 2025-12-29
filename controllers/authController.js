@@ -70,6 +70,8 @@ export const refresh = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
+    return res.status(200).json({ message: "testing" });
+
     if (!refreshToken) {
       return res.status(404).json({ message: "No cookie found" });
     }
