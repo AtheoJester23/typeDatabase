@@ -49,8 +49,9 @@ export const userLogin = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      secure: true, // MUST be true on Render
+      sameSite: "none", // REQUIRED for cross-site cookies
+      path: "/auth/refresh",
       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000,
     });
 
