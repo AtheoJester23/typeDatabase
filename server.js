@@ -23,7 +23,12 @@ app.use(cookieParser());
 //cors:
 app.use(
   cors({
-    origin: ["http://localhost:5173", "typetype-ten.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://typetype-ten.vercel.app",
+      "https://typetype-git-main-atheo-jesters-projects.vercel.app",
+      "https://typetype-llo5jg6qp-atheo-jesters-projects.vercel.app",
+    ],
     credentials: true,
   })
 );
