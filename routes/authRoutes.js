@@ -23,7 +23,9 @@ router.post("/resetPassword", resetPass);
 router.post("/login", userLogin);
 
 //Refresh Token:
-router.post("/refresh", refresh);
+router.post("/refresh", (req, res) => {
+  res.status(200).json({ message: "Refresh endpoint" });
+});
 
 //Logout:
 router.post("/logout", logout);
