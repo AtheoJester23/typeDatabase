@@ -3,7 +3,7 @@ import {
   forgotPass,
   fp,
   logout,
-  refresh,
+  refreshPage,
   resetPass,
   userLogin,
 } from "../controllers/authController.js";
@@ -23,9 +23,7 @@ router.post("/resetPassword", resetPass);
 router.post("/login", userLogin);
 
 //Refresh Token:
-router.post("/refresh", (req, res) => {
-  res.status(200).json({ message: "Refresh endpoint" });
-});
+router.post("/refresh", refreshPage);
 
 //Logout:
 router.post("/logout", logout);
