@@ -67,6 +67,8 @@ export const userLogin = async (req, res) => {
 
 //Refresh token:
 export const refreshPage = async (req, res) => {
+  return res.status(200).json({ message: "Refresh endpoint" });
+
   try {
     const refreshToken = req.cookies.refreshToken;
 
