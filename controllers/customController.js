@@ -169,6 +169,19 @@ export const deleteAllContentsOfUser = async (req, res) => {
   }
 };
 
+export const getATopic = async (req, res) => {
+  try {
+    const topic = await Customs.findOne({ _id: req.params.id });
+    if (!topic) {
+      return res.status(404).json({ message: "Topic not found." });
+    }
+
+    res.status(200).json({ data: topic });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const deleteTopic = async (req, res) => {
   try {
     const topic = await Customs.findOne({ _id: req.params.id });

@@ -4,6 +4,7 @@ import {
   deleteCustom,
   deleteTopic,
   getAllUserCustoms,
+  getATopic,
   getCollectionNames,
   usersCollection,
 } from "../controllers/customController.js";
@@ -14,6 +15,9 @@ const router = express.Router();
 router.post("/create", createNewCustom);
 
 router.get("/", getAllUserCustoms);
+
+//get specific topic:
+router.get("/topic/:id", getATopic);
 
 router.get("/userCollections/:id", getUserById, usersCollection);
 
