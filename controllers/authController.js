@@ -67,8 +67,6 @@ export const userLogin = async (req, res) => {
 
 //Refresh token:
 export const refreshPage = async (req, res) => {
-  return res.status(200).json({ message: "Refresh endpoint" });
-
   try {
     const refreshToken = req.cookies.refreshToken;
 
@@ -76,6 +74,7 @@ export const refreshPage = async (req, res) => {
       return res.status(404).json({ message: "No cookie found" });
     }
 
+    return res.status(200).json({ message: refreshToken });
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
     const user = await Users.findOne({ _id: decoded.id });
