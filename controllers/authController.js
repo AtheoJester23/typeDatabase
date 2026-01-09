@@ -49,8 +49,8 @@ export const userLogin = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000,
     });
 
@@ -74,7 +74,7 @@ export const refreshPage = async (req, res) => {
       return res.status(404).json({ message: "No cookie found" });
     }
 
-    return res.status(200).json({ message: refreshToken });
+    // return res.status(200).json({ message: refreshToken });
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
     const user = await Users.findOne({ _id: decoded.id });
