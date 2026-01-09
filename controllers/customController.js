@@ -1,6 +1,7 @@
 import Customs from "../models/customs.js";
 import Collections from "../models/collections.js";
 import Users from "../models/users.js";
+import jwt from "jsonwebtoken";
 
 export const createNewCustom = async (req, res) => {
   try {
@@ -177,6 +178,56 @@ export const getATopic = async (req, res) => {
     }
 
     res.status(200).json({ data: topic });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateATopic = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const refToken = req.cookies.refreshToken;
+
+    if (!refToken) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    //verify token:
+    jwt.verify(
+      refToken,
+      process.env.JWT_REFRESH_SECRET,
+      async (err, decoded) => {
+        if (err) {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+
+        //find user:
+        const user = await Users.findOne({ id: decoded._id });
+        if (!user) {
+          return res.status(404).json({ message: "User not found." });
+        }
+
+        //Get the topic:
+        const topic = await Customs.findOne({ _id: req.params.id });
+        if (!topic) {
+          return res.status(404).json({ message: "Topic not found" });
+        }
+
+        if (title && title.replace(/[ ]/g, "") !== "") {
+          topic.title = title;
+        }
+
+        if (content && content.replace(/[ ]/g, "") !== "") {
+          topic.content = content;
+        }
+
+        // //Actual update:
+        await topic.save();
+
+        //response:
+        res.status(200).json({ message: topic });
+      }
+    );
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

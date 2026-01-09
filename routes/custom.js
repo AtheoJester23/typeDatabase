@@ -6,6 +6,7 @@ import {
   getAllUserCustoms,
   getATopic,
   getCollectionNames,
+  updateATopic,
   usersCollection,
 } from "../controllers/customController.js";
 import { getUserById } from "../middlewares/getUserById.js";
@@ -18,6 +19,8 @@ router.get("/", getAllUserCustoms);
 
 //get specific topic:
 router.get("/topic/:id", getATopic);
+
+router.patch("/topic/:id", updateATopic);
 
 router.get("/userCollections/:id", getUserById, usersCollection);
 
